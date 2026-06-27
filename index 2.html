@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bioinformatics Analysis Pipeline — Nikhila Sai Tummala</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg1:#F0EAF8;--bg2:#FDE8D8;--bg3:#E8F0FD;
+  --violet:#6D28D9;--violet2:#8B5CF6;--violet3:#C4B5FD;
+  --orange:#EA6C00;--orange2:#F97316;--amber:#F59E0B;
+  --blue:#2563EB;--sky:#60A5FA;--rose:#E11D48;
+  --dark:#1E1030;--ink:#2D1B4E;--muted:#6B5B8A;
+  --card:#FFFFFF;--cream:#FDF8F2;
+  --shadow:rgba(109,40,217,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Nunito',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 0% 0%,   rgba(139,92,246,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 0%,  rgba(249,115,22,0.14) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(37,99,235,0.12)  0%, transparent 55%),
+    radial-gradient(ellipse at 100% 100%,rgba(245,158,11,0.10) 0%, transparent 50%),
+    linear-gradient(160deg,#F5EEF8 0%,#FDF0E8 50%,#EDF2FD 100%);
+  background-attachment:fixed;
+}
+
+/* subtle dot grid overlay */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(109,40,217,0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  text-align:center;
+  padding:72px 20px 52px;
+  border-bottom:1px solid rgba(109,40,217,0.12);
+}
+.hero-label{
+  font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--violet);font-weight:700;margin-bottom:14px;
+}
+.hero-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.8rem);
+  font-weight:700;color:var(--dark);
+  letter-spacing:1px;margin-bottom:10px;
+  line-height:1.2;
+}
+.hero-title span{
+  background:linear-gradient(135deg,var(--violet),var(--orange2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:0.95rem;color:var(--muted);font-style:italic;}
+
+/* ── LANDING BLOCK (single entry point) ── */
+.landing{
+  position:relative;z-index:1;
+  display:flex;justify-content:center;align-items:center;
+  min-height:40vh;padding:60px 20px;
+}
+.entry-block{
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:white;
+  border-radius:24px;
+  padding:40px 56px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 12px 48px rgba(109,40,217,0.3);
+  transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  max-width:420px;width:100%;
+  border:2px solid rgba(255,255,255,0.2);
+}
+.entry-block:hover{
+  transform:translateY(-6px) scale(1.03);
+  box-shadow:0 24px 64px rgba(109,40,217,0.4);
+}
+.entry-block h2{
+  font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;
+  margin-bottom:8px;letter-spacing:0.5px;
+}
+.entry-block p{font-size:0.85rem;opacity:0.85;line-height:1.5;}
+.entry-cta{
+  display:inline-block;margin-top:18px;
+  font-size:0.78rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;
+  border:1.5px solid rgba(255,255,255,0.6);
+  border-radius:20px;padding:5px 18px;
+  transition:background 0.2s;
+}
+.entry-block:hover .entry-cta{background:rgba(255,255,255,0.15);}
+
+/* ── SCREENS (pages) ── */
+.screen{display:none;position:relative;z-index:1;}
+.screen.active{display:block;}
+
+/* ── SCREEN HEADER ── */
+.screen-header{
+  text-align:center;padding:52px 20px 36px;
+  border-bottom:1px solid rgba(109,40,217,0.1);
+  margin-bottom:40px;
+}
+.back-btn{
+  display:inline-block;
+  font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;margin-bottom:20px;
+  padding:5px 14px;border:1px solid rgba(109,40,217,0.2);border-radius:20px;
+  transition:all 0.2s;
+}
+.back-btn:hover{color:var(--violet);border-color:var(--violet);}
+.screen-label{
+  font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;
+  font-weight:700;margin-bottom:8px;
+}
+.screen-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.4rem,3.5vw,2rem);
+  color:var(--dark);margin-bottom:12px;
+}
+.screen-intro{
+  max-width:600px;margin:0 auto;
+  font-size:0.92rem;color:var(--muted);line-height:1.8;
+}
+
+/* ── CHOICE CARDS (DNA / RNA) ── */
+.choice-row{
+  display:flex;justify-content:center;gap:24px;
+  flex-wrap:wrap;padding:0 20px 80px;
+  position:relative;z-index:1;
+}
+.choice-card{
+  background:var(--card);
+  border-radius:20px;padding:32px 28px;
+  cursor:pointer;text-align:center;
+  border:2px solid transparent;
+  box-shadow:0 6px 28px var(--shadow);
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  min-width:220px;max-width:260px;flex:1;
+}
+.choice-card:hover{transform:translateY(-7px);}
+.cc-dna{border-top:5px solid var(--orange);}
+.cc-dna:hover{border-color:var(--orange);box-shadow:0 16px 48px rgba(234,108,0,0.18);}
+.cc-rna{border-top:5px solid var(--violet);}
+.cc-rna:hover{border-color:var(--violet);box-shadow:0 16px 48px rgba(109,40,217,0.18);}
+.cc-icon{font-size:2.2rem;margin-bottom:12px;}
+.cc-title{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.cc-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:14px;}
+.cc-cta{
+  font-size:0.74rem;font-weight:700;
+  padding:5px 16px;border-radius:18px;border:1.5px solid;display:inline-block;
+}
+.cc-dna .cc-cta{color:var(--orange);border-color:var(--orange);}
+.cc-rna .cc-cta{color:var(--violet);border-color:var(--violet);}
+
+/* ── PIPELINE ── */
+.pipeline-wrap{
+  max-width:880px;margin:0 auto;padding:0 20px 80px;
+}
+
+/* sub-tabs for RNA */
+.sub-tabs{
+  display:flex;gap:12px;justify-content:center;
+  margin-bottom:36px;flex-wrap:wrap;
+}
+.stab{
+  padding:8px 22px;border-radius:24px;font-size:0.82rem;font-weight:700;
+  cursor:pointer;border:2px solid var(--violet);color:var(--violet);
+  background:transparent;transition:all 0.2s;font-family:'Nunito',sans-serif;
+}
+.stab.active,.stab:hover{background:var(--violet);color:white;}
+
+.subpanel{display:none;}
+.subpanel.active{display:block;}
+
+/* pipeline vertical line */
+.pipeline{position:relative;}
+.pipeline::before{
+  content:'';position:absolute;left:52px;top:64px;bottom:64px;
+  width:2px;
+  background:linear-gradient(to bottom,var(--violet),var(--orange2),var(--amber));
+  border-radius:2px;
+}
+
+/* step card */
+.step-wrap{display:flex;gap:18px;align-items:flex-start;margin-bottom:14px;}
+.step-dot{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;
+  color:white;flex-shrink:0;margin-top:12px;
+  position:relative;z-index:1;
+  box-shadow:0 3px 12px rgba(0,0,0,0.18);
+}
+.step-card{
+  flex:1;background:var(--card);border-radius:16px;
+  padding:16px 20px;cursor:pointer;
+  border:1.5px solid rgba(109,40,217,0.1);
+  box-shadow:0 3px 16px var(--shadow);
+  transition:all 0.25s;
+}
+.step-card:hover{border-color:var(--violet2);box-shadow:0 8px 32px rgba(109,40,217,0.14);transform:translateX(3px);}
+.step-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.step-left{flex:1;}
+.step-name{font-family:'Cinzel',serif;font-size:0.92rem;font-weight:700;color:var(--dark);}
+.step-sub{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+.step-chevron{
+  font-size:1.1rem;color:var(--violet2);flex-shrink:0;
+  transition:transform 0.3s;
+}
+.step-wrap.open .step-chevron{transform:rotate(45deg);}
+
+.step-detail{
+  display:none;margin-top:14px;padding-top:14px;
+  border-top:1px dashed rgba(109,40,217,0.18);
+}
+.step-wrap.open .step-detail{display:block;}
+
+/* info pills */
+.info-row{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;
+}
+.info-pill{
+  font-size:0.7rem;font-weight:700;padding:3px 11px;border-radius:16px;border:1.5px solid;
+}
+.ip-in{background:rgba(37,99,235,0.07);color:var(--blue);border-color:rgba(37,99,235,0.25);}
+.ip-out{background:rgba(234,108,0,0.07);color:var(--orange);border-color:rgba(234,108,0,0.25);}
+.ip-tool{background:rgba(109,40,217,0.07);color:var(--violet);border-color:rgba(109,40,217,0.25);}
+.ip-why{background:rgba(245,158,11,0.07);color:#92400E;border-color:rgba(245,158,11,0.3);}
+
+/* explanation box */
+.explain{
+  background:linear-gradient(135deg,rgba(109,40,217,0.04),rgba(249,115,22,0.04));
+  border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  font-size:0.86rem;line-height:1.75;color:var(--ink);
+  border-left:3px solid var(--violet3);
+}
+.explain strong{color:var(--violet);}
+
+/* code block */
+.code-block{
+  background:#1E1030;border-radius:10px;padding:13px 16px;
+  margin-top:10px;overflow-x:auto;
+}
+.code-block pre{
+  font-family:'Courier New',monospace;font-size:0.74rem;
+  color:#E2D9FF;line-height:1.85;white-space:pre;
+}
+.cc{color:#6D5E8A;}.ck{color:#F59E0B;}.cs{color:#86EFAC;}
+
+/* flow diagram */
+.flow-diag{
+  background:rgba(255,255,255,0.8);border-radius:10px;
+  padding:12px 14px;margin:10px 0;
+  font-size:0.78rem;color:var(--dark);text-align:center;
+  border:1px solid rgba(109,40,217,0.1);line-height:2;
+}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  text-align:center;padding:36px 20px 52px;
+  border-top:1px solid rgba(109,40,217,0.1);
+}
+footer p{font-size:0.8rem;color:var(--muted);margin-bottom:4px;}
+footer a{color:var(--violet);text-decoration:none;font-weight:700;}
+footer .fname{
+  font-family:'Cinzel',serif;font-size:1rem;
+  color:var(--dark);font-weight:700;margin-bottom:6px;
+}
+
+@media(max-width:600px){
+  .pipeline::before{left:20px;}
+  .step-dot{width:30px;height:30px;font-size:0.65rem;}
+  .entry-block{padding:30px 24px;}
+  .choice-row{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Genomic Analysis</div>
+  <h1 class="hero-title">Bioinformatics Analysis — <span>Nikhila</span></h1>
+  <p class="hero-sub">Where genomics meets curiosity, and sometimes a little magic.</p>
+</section>
+
+<!-- LANDING — single entry block -->
+<div class="landing" id="landing">
+  <div class="entry-block" onclick="goTo('analysis-choice')">
+    <h2>Bioinformatics Analysis Pipeline</h2>
+    <p>An interactive walkthrough of genomic data analysis — from raw sequencing reads to biological insight.</p>
+    <span class="entry-cta">Enter Pipeline</span>
+  </div>
+</div>
+
+<!-- SCREEN: ANALYSIS CHOICE -->
+<div class="screen" id="screen-analysis-choice">
+  <div class="screen-header">
+    <div class="back-btn" onclick="goTo('landing')">Back</div>
+    <div class="screen-label" style="color:var(--violet)">Choose your analysis</div>
+    <h2 class="screen-title">Bioinformatics Analysis Pipeline</h2>
+    <p class="screen-intro">
+      Every genomic study begins with a biological question. The type of molecule you sequence
+      determines your analysis path. DNA tells you what variants exist in the genome.
+      RNA tells you which genes are active, when, and how they are processed.
+    </p>
+  </div>
+  <div class="choice-row">
+    <div class="choice-card cc-dna" onclick="goTo('dna')">
+      <div class="cc-icon">DNA</div>
+      <div class="cc-title">DNA Sequencing Analysis</div>
+      <div class="cc-desc">Gene-phenotype associations via variant analysis. QTL-seq, mutant analysis, variant calling, annotation, pathway mapping.</div>
+      <span class="cc-cta">Open</span>
+    </div>
+    <div class="choice-card cc-rna" onclick="goTo('rna')">
+      <div class="cc-icon">RNA</div>
+      <div class="cc-title">RNA Sequencing Analysis</div>
+      <div class="cc-desc">Differential gene expression, splicing and splice-site analysis, temporal dynamics across time points.</div>
+      <span class="cc-cta">Open</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ DNA SCREEN ═══════════════════════════ -->
+<div class="screen" id="screen-dna">
+  <div class="screen-header">
+    <div class="back-btn" onclick="goTo('analysis-choice')">Back to Analysis Choice</div>
+    <div class="screen-label" style="color:var(--orange)">DNA Sequencing</div>
+    <h2 class="screen-title">Gene-Phenotype Associations via Variant Analysis</h2>
+    <p class="screen-intro">
+      DNA sequencing lets you find differences between your sample and a known reference genome.
+      These differences — variants and mutations — can be mapped to genes, and those genes to
+      biological traits and phenotypes. Each step below is clickable for full detail.
+    </p>
+  </div>
+
+  <div class="pipeline-wrap">
+    <div class="pipeline">
+
+      <!-- D1 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#EA6C00,#F59E0B);">1</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">DNA Extraction / Dataset Download</div>
+              <div class="step-sub">CTAB protocol · Illumina WGS · NCBI SRA · FASTQ files</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is this step?</strong> Before any analysis, you need your raw DNA data.
+              You either extract DNA fresh from biological tissue in the lab,
+              or download publicly available sequencing data from NCBI's SRA (Sequence Read Archive).<br/><br/>
+              <strong>Lab extraction:</strong> DNA is extracted using the CTAB method —
+              a chemical protocol that breaks open cells, removes proteins and RNA,
+              and leaves you with purified genomic DNA. This is then sent for
+              whole-genome sequencing on Illumina machines (HiSeq, NovaSeq) at typically 30-40x coverage,
+              meaning every genomic position is read ~40 times for high confidence.<br/><br/>
+              <strong>Public databases:</strong> NCBI SRA holds thousands of publicly available
+              sequencing datasets. Every project has SRA accession numbers (e.g. SRR12345678).
+              You download them using SRA Toolkit and convert to FASTQ format.<br/><br/>
+              <strong>What is a FASTQ file?</strong> A text file containing millions of short sequence reads.
+              Each read has four lines: a header ID, the DNA sequence (A/T/G/C), a separator, and a quality score line
+              showing how confident the sequencing machine was at each base position.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">SRA Toolkit v3.4.1</span>
+              <span class="info-pill ip-tool">prefetch + fasterq-dump</span>
+              <span class="info-pill ip-tool">CTAB extraction</span>
+              <span class="info-pill ip-in">Input: tissue / SRA accession</span>
+              <span class="info-pill ip-out">Output: .fastq files (paired-end: _1.fastq + _2.fastq)</span>
+            </div>
+            <div class="code-block"><pre><span class="cc"># Download from NCBI SRA</span>
+prefetch SRR12345678
+fasterq-dump SRR12345678.sra --split-files
+<span class="cc"># Output: SRR12345678_1.fastq (forward reads)
+#         SRR12345678_2.fastq (reverse reads)</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D2 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#60A5FA);">2</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Quality Check — FastQC</div>
+              <div class="step-sub">FastQC v0.11.2 · FastP · HTML quality report</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is quality checking?</strong> Before doing any analysis, you must assess
+              whether your raw sequencing data is reliable. FastQC reads your FASTQ file and
+              generates a detailed HTML report with visual plots.<br/><br/>
+              <strong>What does FastQC tell you?</strong> Per-base sequence quality (you want Q30+,
+              meaning 99.9% accuracy at every base), adapter contamination (lab kit sequences
+              accidentally included in your reads), GC content distribution (should match your
+              organism), sequence duplication levels, and N content (unknown bases).<br/><br/>
+              <strong>What is a quality score?</strong> Phred quality scores indicate how confident
+              the sequencing machine is. Q20 = 99% accuracy, Q30 = 99.9%, Q40 = 99.99%.
+              For variant calling, you generally want Q20 minimum and aim for Q30+.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">FastQC v0.11.2</span>
+              <span class="info-pill ip-tool">FastP v0.23.2</span>
+              <span class="info-pill ip-in">Input: .fastq files</span>
+              <span class="info-pill ip-out">Output: HTML quality report</span>
+              <span class="info-pill ip-why">If Q30 &gt; 80% and low adapter = proceed. Else trim first.</span>
+            </div>
+            <div class="code-block"><pre>fastqc sample_1.fastq sample_2.fastq \
+  --outdir fastqc_results/ --threads 6
+<span class="cc"># Opens as HTML in browser — check green ticks</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D3 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#F97316);">3</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Trimming and Quality Control</div>
+              <div class="step-sub">Trimmomatic v0.40 · BBDuk2 · Trim Galore! · then FastQC again</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>Why trim?</strong> Raw sequencing reads contain two types of noise:
+              adapter sequences (short synthetic sequences from the sequencing kit that
+              accidentally get attached to the ends of your reads) and low-quality bases
+              (positions where the sequencing machine was uncertain, usually at read ends).<br/><br/>
+              <strong>What does Trimmomatic do?</strong> It removes adapter sequences using
+              a reference adapter file, crops the first few bases (HEADCROP:10) to remove
+              hexamer primer bias, trims low-quality bases from both ends (LEADING:3 TRAILING:3),
+              applies a sliding window approach to cut reads where quality drops
+              (SLIDINGWINDOW:4:20 means cut where any 4-base window drops below Q20),
+              and discards reads shorter than 50 bases (MINLEN:50).<br/><br/>
+              <strong>After trimming:</strong> Always re-run FastQC to confirm the trimming
+              worked. Adapter content should be gone and base quality should improve.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">Trimmomatic v0.40</span>
+              <span class="info-pill ip-tool">BBDuk2 v37.36 (Q20 threshold)</span>
+              <span class="info-pill ip-tool">Trim Galore! v0.6.7</span>
+              <span class="info-pill ip-in">Input: raw .fastq files</span>
+              <span class="info-pill ip-out">Output: clean_1.fastq + clean_2.fastq (paired)</span>
+            </div>
+            <div class="code-block"><pre>trimmomatic PE -threads 6 \
+  sample_1.fastq sample_2.fastq \
+  clean_1.fastq unpaired_1.fastq \
+  clean_2.fastq unpaired_2.fastq \
+  ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 \
+  HEADCROP:10 LEADING:3 TRAILING:3 \
+  SLIDINGWINDOW:4:20 MINLEN:50
+
+<span class="cc"># Re-run FastQC to verify improvement</span>
+fastqc clean_1.fastq clean_2.fastq</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D4 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#EA6C00,#6D28D9);">4</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Alignment to Reference Genome — BWA</div>
+              <div class="step-sub">BWA v0.7.17 (Burrows-Wheeler Aligner) · SAM output</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is alignment?</strong> Alignment is the process of taking each short read
+              from your FASTQ file and finding its exact position on the reference genome —
+              like placing puzzle pieces onto a completed picture.<br/><br/>
+              <strong>What is a reference genome?</strong> A reference genome is a high-quality,
+              well-annotated sequence assembled from a large group of healthy, typical individuals
+              of that species. For rice: IRGSP-1.0 (Nipponbare). For humans: GRCh38.
+              It represents the standard, and your sample is compared to it.<br/><br/>
+              <strong>What is BWA?</strong> BWA (Burrows-Wheeler Aligner) uses an algorithm
+              called the Burrows-Wheeler Transform — a way of compressing and indexing the genome
+              so it can be searched extremely fast. BWA-MEM is the standard mode, optimised
+              for reads of 70bp-1Mbp. It is the gold standard for DNA alignment.<br/><br/>
+              <strong>What is a SAM file?</strong> The output. SAM (Sequence Alignment/Map) is a
+              large text file where each line represents one read and records: which chromosome,
+              which position, which strand, and how well it aligned (MAPQ score).
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">BWA v0.7.17</span>
+              <span class="info-pill ip-tool">Algorithm: Burrows-Wheeler Transform + FM-index</span>
+              <span class="info-pill ip-in">Input: clean_1.fastq + clean_2.fastq + reference.fa</span>
+              <span class="info-pill ip-out">Output: aligned.sam</span>
+            </div>
+            <div class="flow-diag">clean reads + reference genome.fa → BWA mem → aligned.sam</div>
+            <div class="code-block"><pre><span class="cc"># Index reference genome (once)</span>
+bwa index genome.fa
+
+<span class="cc"># Align paired-end reads</span>
+bwa mem -t 8 genome.fa \
+  clean_1.fastq clean_2.fastq \
+  > aligned.sam</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D5 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#6D28D9);">5</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">SAM to BAM — SAMtools Sorting, Indexing, Validation</div>
+              <div class="step-sub">SAMtools v1.3.1 · Picard Tools · SAM → BAM → sorted → deduplicated</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is a BAM file?</strong> BAM is the binary, compressed version of a SAM file.
+              It is much smaller and faster to work with. The same information is stored,
+              but in a format computers can read far more efficiently.<br/><br/>
+              <strong>Why sort?</strong> Downstream tools (variant callers, IGV) require reads to be
+              sorted by their chromosomal position, not the order they were sequenced in.<br/><br/>
+              <strong>Why remove duplicates?</strong> During PCR amplification before sequencing,
+              some DNA fragments get copied multiple times. These duplicates can artificially
+              inflate read depth at a position and make a variant look more confident than it is.
+              Picard MarkDuplicates flags and removes them.<br/><br/>
+              <strong>Why index?</strong> Indexing creates a .bai file — like a table of contents.
+              It allows tools to jump directly to any chromosomal position without reading the
+              entire BAM file from the start.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">SAMtools v1.3.1</span>
+              <span class="info-pill ip-tool">Picard Tools</span>
+              <span class="info-pill ip-in">Input: aligned.sam</span>
+              <span class="info-pill ip-out">Output: deduped.bam + deduped.bam.bai (index)</span>
+            </div>
+            <div class="flow-diag">aligned.sam → view (SAM to BAM) → sort → remove PCR duplicates → index → deduped.bam.bai</div>
+            <div class="code-block"><pre><span class="cc"># Convert SAM to BAM and sort</span>
+samtools view -bS aligned.sam | \
+  samtools sort -o sorted.bam
+
+<span class="cc"># Remove PCR duplicates</span>
+samtools rmdup sorted.bam deduped.bam
+
+<span class="cc"># Index for fast access</span>
+samtools index deduped.bam
+
+<span class="cc"># Validate the BAM file</span>
+samtools flagstat deduped.bam</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D6 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#E11D48,#F97316);">6</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Variant Calling — FreeBayes / GATK HaplotypeCaller</div>
+              <div class="step-sub">FreeBayes v1.1.0 · GATK HaplotypeCaller · Picard Tools · VCF output</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is variant calling?</strong> The variant caller reads your BAM file and,
+              position by position across the entire genome, compares your sample's nucleotides
+              to the reference. Wherever your sample consistently shows a different nucleotide,
+              that's a variant.<br/><br/>
+              <strong>Types of variants:</strong> SNPs (Single Nucleotide Polymorphisms) — a single
+              letter change, e.g. A becomes G at a specific position. InDels — insertions or
+              deletions of one or more bases. Structural variants — larger rearrangements.<br/><br/>
+              <strong>What is FreeBayes?</strong> A Bayesian genetic variant detector. It looks at
+              all the reads piled up at each position and calculates the probability that an
+              observed difference is a real variant vs a sequencing error. It requires a minimum
+              depth of 10 reads (DP &gt; 10) and mapping quality &gt; 40 before calling a variant.<br/><br/>
+              <strong>What is GATK HaplotypeCaller?</strong> The industry-standard variant caller
+              from the Broad Institute. It uses local de-novo assembly of haplotypes around each
+              potential variant site for higher accuracy.<br/><br/>
+              <strong>What is a VCF file?</strong> Variant Call Format. A text file listing every
+              position where a variant was found, with columns for chromosome, position,
+              reference allele, alternate allele, quality score, filter status, and detailed
+              information about read support.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">FreeBayes v1.1.0</span>
+              <span class="info-pill ip-tool">GATK HaplotypeCaller</span>
+              <span class="info-pill ip-tool">Picard Tools</span>
+              <span class="info-pill ip-in">Input: deduped.bam + reference.fa</span>
+              <span class="info-pill ip-out">Output: variants.vcf → filtered.vcf</span>
+              <span class="info-pill ip-why">Filter: depth &gt;= 10, mapping quality &gt;= 40</span>
+            </div>
+            <div class="code-block"><pre><span class="cc"># FreeBayes variant calling</span>
+freebayes -f genome.fa deduped.bam > variants.vcf
+
+<span class="cc"># Filter by depth and quality</span>
+vcffilter -f "DP > 10 &amp; QUAL > 40" \
+  variants.vcf > filtered.vcf</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D7 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#F59E0B,#6D28D9);">7</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">IGV Visualisation — Mutant Check</div>
+              <div class="step-sub">Integrative Genomics Viewer · Visual validation of variants</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is IGV?</strong> The Integrative Genomics Viewer is a desktop tool
+              that lets you visually inspect your aligned reads at any chromosomal position.
+              You load your BAM file and your VCF file, then zoom into any position to see
+              the reads piled up like a mountain.<br/><br/>
+              <strong>What do you look for?</strong> At a true SNP position, you will see a
+              column of coloured mismatching bases — for example, all reads at position
+              chr3:12345 show a G where the reference shows A. That is a clear SNP.
+              For an InDel, you'll see gaps or insertions clearly marked in the read stack.<br/><br/>
+              <strong>Mutant vs polymorphism:</strong> In a mutant study, the variant is a change
+              from the wild-type. In a population study, it is a naturally occurring polymorphism.
+              IGV helps you visually confirm which type you are seeing and whether it's
+              in a coding region, intron, or intergenic region.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">IGV (desktop)</span>
+              <span class="info-pill ip-in">Input: deduped.bam + filtered.vcf + reference.fa</span>
+              <span class="info-pill ip-out">Output: visual confirmation of variants</span>
+            </div>
+            <div class="flow-diag">
+              Load .bam + .vcf in IGV → navigate to variant position → read pile-up view<br/>
+              SNP = column of mismatched bases &nbsp;|&nbsp; InDel = gaps/insertions in reads
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D8 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#2563EB);">8</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Variant Annotation — VEP / Ensembl</div>
+              <div class="step-sub">VEP · SnpEff · Ensembl database · functional consequence</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is annotation?</strong> Your VCF contains chromosomal positions and
+              nucleotide changes — but no biological context. Annotation adds that context
+              by looking up each position in gene databases.<br/><br/>
+              <strong>What does VEP tell you?</strong> Which gene is at this position.
+              Which transcript is affected. What the nucleotide change does to the protein:
+              missense (amino acid changes), synonymous (same amino acid, silent),
+              stop-gained (protein is truncated), frameshift (reading frame disrupted),
+              5' or 3' UTR (regulatory region affected). SIFT scores predict whether
+              the amino acid change is tolerated or deleterious.<br/><br/>
+              <strong>Why does this matter?</strong> A missense mutation in an active site of a
+              kinase is far more likely to affect function than a synonymous change in an intron.
+              Annotation lets you prioritise which variants are biologically interesting.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">VEP (Ensembl)</span>
+              <span class="info-pill ip-tool">SnpEff</span>
+              <span class="info-pill ip-tool">SIFT score</span>
+              <span class="info-pill ip-in">Input: filtered.vcf</span>
+              <span class="info-pill ip-out">Output: annotated VCF with gene names + consequences</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D9 -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#EA6C00,#F59E0B);">9</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">Pathway Enrichment — Gene Ontology / KEGG / STRING</div>
+              <div class="step-sub">Gene linkage to traits and biological pathways</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is pathway analysis?</strong> After annotation, you have a list of
+              genes affected by variants. Pathway analysis asks: do these genes cluster in
+              specific biological processes, and does that clustering make sense for your trait?<br/><br/>
+              <strong>Gene Ontology (GO):</strong> Classifies genes by biological process
+              (what pathway), molecular function (what activity), and cellular component
+              (where in the cell). Enrichment analysis tells you which GO terms are
+              over-represented in your gene list compared to what you'd expect by chance.<br/><br/>
+              <strong>KEGG:</strong> Maps your genes to known metabolic and signalling pathways
+              with visual pathway diagrams showing where your genes fit.<br/><br/>
+              <strong>STRING:</strong> Shows protein-protein interaction networks among your genes.
+              Genes that interact physically often function together — useful for understanding
+              the mechanism behind a phenotype.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">Gene Ontology</span>
+              <span class="info-pill ip-tool">KEGG</span>
+              <span class="info-pill ip-tool">STRING</span>
+              <span class="info-pill ip-tool">QTARO (rice QTL database)</span>
+              <span class="info-pill ip-in">Input: annotated gene list</span>
+              <span class="info-pill ip-out">Output: enriched pathways + trait associations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D10: QTL-seq -->
+      <div class="step-wrap" onclick="toggleStep(this)">
+        <div class="step-dot" style="background:linear-gradient(135deg,#E11D48,#6D28D9);">10</div>
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-left">
+              <div class="step-name">QTL-seq + KASP + SNP Validation</div>
+              <div class="step-sub">QTL-seq v2.2.3 · TASSEL 5.2.88 · KASP assays · SNP-seek</div>
+            </div>
+            <div class="step-chevron">+</div>
+          </div>
+          <div class="step-detail">
+            <div class="explain">
+              <strong>What is QTL-seq?</strong> A bulk segregant approach to map quantitative traits
+              to chromosomal regions. You pool DNA from the most extreme individuals at each end of
+              a phenotypic distribution (e.g. earliest vs latest heading plants), sequence both pools,
+              and calculate the delta-SNP-index at every position. A peak in the delta-SNP-index
+              indicates a QTL — a genomic region controlling the trait.<br/><br/>
+              <strong>KASP assays:</strong> Once a QTL region is identified, KASP (Kompetitive
+              Allele-Specific PCR) assays validate individual SNPs in that region across large
+              plant populations. Each KASP assay targets one SNP and distinguishes the two
+              alleles by fluorescence. We validated 49 SNPs in the qDTH3 region of rice chromosome 3.<br/><br/>
+              <strong>TASSEL:</strong> Statistical association mapping between SNP genotypes and
+              phenotypic data using mixed linear models (MLM) to account for population structure.
+            </div>
+            <div class="info-row">
+              <span class="info-pill ip-tool">QTL-seq v2.2.3</span>
+              <span class="info-pill ip-tool">TASSEL 5.2.88</span>
+              <span class="info-pill ip-tool">KASP assays (LGC Genomics)</span>
+              <span class="info-pill ip-tool">ChiPlot (clustering)</span>
+              <span class="info-pill ip-in">Input: early bulk + late bulk BAM files</span>
+              <span class="info-pill ip-out">Output: delta-SNP-index plot → QTL peaks → validated SNP markers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RNA SCREEN ═══════════════════════════ -->
+<div class="screen" id="screen-rna">
+  <div class="screen-header">
+    <div class="back-btn" onclick="goTo('analysis-choice')">Back to Analysis Choice</div>
+    <div class="screen-label" style="color:var(--violet)">RNA Sequencing</div>
+    <h2 class="screen-title">RNA Sequencing Analysis</h2>
+    <p class="screen-intro">
+      RNA reflects what a cell is actively doing. RNA-seq captures gene activity across conditions,
+      time points, and even at the resolution of how individual genes are spliced.
+      Choose your analysis pathway below.
+    </p>
+  </div>
+
+  <div class="pipeline-wrap">
+    <div class="sub-tabs">
+      <button class="stab active" onclick="openSub('dge',this)">Differential Gene Expression</button>
+      <button class="stab" onclick="openSub('splicing',this)">Splicing / Splice-site Analysis</button>
+    </div>
+
+    <!-- DGE -->
+    <div class="subpanel active" id="sub-dge">
+      <div class="pipeline">
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#8B5CF6);">1</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">RNA Extraction / Dataset Download</div>
+                <div class="step-sub">RNeasy kit · NCBI SRA · FASTQ files</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                <strong>What is RNA extraction?</strong> RNA is extracted from fresh tissue using
+                kits like RNeasy (Qiagen) or TRIzol. Unlike DNA, RNA degrades very rapidly —
+                samples must be snap-frozen in liquid nitrogen immediately after collection
+                and kept at -80°C until processing.<br/><br/>
+                <strong>RNA integrity:</strong> Before sequencing, RNA quality is assessed using a
+                BioAnalyzer (RIN score — you want above 7) and quantified with Qubit.
+                Good quality RNA is essential — degraded RNA produces unreliable expression data.<br/><br/>
+                <strong>Library preparation:</strong> 1 µg of RNA is used per sample for library prep
+                (e.g. Illumina TruSeq Stranded Total RNA with Ribo-Zero) to deplete ribosomal RNA
+                and enrich for mRNA. Sequencing gives ~100 million paired-end reads per sample.<br/><br/>
+                <strong>Public data:</strong> Same as DNA — NCBI SRA, prefetch + fasterq-dump.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">RNeasy Kit (Qiagen)</span>
+                <span class="info-pill ip-tool">SRA Toolkit v3.4.1</span>
+                <span class="info-pill ip-in">Input: tissue / SRA accession</span>
+                <span class="info-pill ip-out">Output: sample_1.fastq + sample_2.fastq</span>
+              </div>
+              <div class="code-block"><pre>prefetch SRR12345678
+fasterq-dump SRR12345678.sra --split-files</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#60A5FA);">2</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Quality Check + Trimming</div>
+                <div class="step-sub">FastQC v0.12.1 · Trimmomatic v0.40 · Trim Galore! v0.6.7</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                Same principle as DNA — check quality with FastQC, trim adapters and low-quality bases
+                with Trimmomatic, then run FastQC again to confirm improvement. For RNA-seq, the
+                HEADCROP:10 parameter removes the first 10 bases to eliminate hexamer priming bias
+                common in RNA library preparation.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">FastQC v0.12.1</span>
+                <span class="info-pill ip-tool">Trimmomatic v0.40</span>
+                <span class="info-pill ip-in">Input: raw .fastq files</span>
+                <span class="info-pill ip-out">Output: trimmed paired .fastq files</span>
+              </div>
+              <div class="code-block"><pre>fastqc sample_1.fastq sample_2.fastq
+trimmomatic PE sample_1.fastq sample_2.fastq \
+  clean_1.fastq unpaired_1.fastq \
+  clean_2.fastq unpaired_2.fastq \
+  ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 \
+  HEADCROP:10 LEADING:3 TRAILING:3 \
+  SLIDINGWINDOW:4:20 MINLEN:50
+fastqc clean_1.fastq clean_2.fastq</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#2563EB);">3</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Alignment — STAR / HISAT2 / TopHat</div>
+                <div class="step-sub">Splice-aware aligners · BAM output · IGV check</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                <strong>Why different aligners for RNA?</strong> RNA-seq reads come from mature mRNA,
+                which has had introns removed by splicing. A read can span two exons that are
+                thousands of bases apart on the genome. Regular aligners like BWA fail here —
+                you need splice-aware aligners.<br/><br/>
+                <strong>STAR:</strong> Spliced Transcripts Alignment to a Reference. The most widely
+                used RNA-seq aligner. It builds a genome index and aligns reads in two passes —
+                first discovering splice junctions, then aligning using those junctions.
+                Very fast, handles novel splice sites. Used in our Arabidopsis splicing thesis.<br/><br/>
+                <strong>HISAT2:</strong> Graph-based aligner, uses less memory than STAR, similar
+                accuracy. Good alternative on memory-limited systems.<br/><br/>
+                <strong>TopHat:</strong> Legacy splice-aware aligner (uses Bowtie2 internally).
+                Used in the BCR-ABL CML project with the TopHat/Cufflinks pipeline.<br/><br/>
+                <strong>After alignment:</strong> Load BAM in IGV to visually verify the alignment
+                looks correct and to check strandedness of the data.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">STAR v2.7.11b</span>
+                <span class="info-pill ip-tool">HISAT2 v2.2.1</span>
+                <span class="info-pill ip-tool">TopHat (legacy)</span>
+                <span class="info-pill ip-in">Input: clean .fastq + reference genome + GTF annotation</span>
+                <span class="info-pill ip-out">Output: .BAM file sorted by coordinate</span>
+              </div>
+              <div class="code-block"><pre><span class="cc"># STAR alignment</span>
+STAR --runThreadN 8 \
+  --genomeDir ./star_index/ \
+  --readFilesIn clean_1.fastq clean_2.fastq \
+  --outSAMtype BAM SortedByCoordinate \
+  --outSAMattributes NH HI AS NM \
+  --outFileNamePrefix ./output/sample_
+samtools index ./output/sample_.Aligned.sortedByCoord.out.bam</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#F59E0B,#EA6C00);">4</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Feature Counts — Count Matrix Generation</div>
+                <div class="step-sub">featureCounts v2.0.3 · HTSeq · Cufflinks (legacy)</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                <strong>What is a count matrix?</strong> After alignment, you count how many reads
+                landed on each gene in each sample. The result is a matrix with genes as rows
+                and samples as columns. Each cell is an integer — the number of reads from
+                that sample that mapped to that gene. More reads = higher gene expression.<br/><br/>
+                <strong>featureCounts</strong> is fast and memory-efficient, part of the Subread package.
+                It assigns reads to genomic features based on a GTF annotation file.<br/><br/>
+                <strong>Cufflinks (legacy):</strong> The older pipeline (used in the BCR-ABL project)
+                assembled transcripts from BAM files, then used Cuffmerge, Cuffdiff, and CummeRbund
+                for differential expression and visualisation.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">featureCounts v2.0.3</span>
+                <span class="info-pill ip-tool">HTSeq v2.0.2</span>
+                <span class="info-pill ip-tool">Cufflinks / Cuffdiff (legacy)</span>
+                <span class="info-pill ip-in">Input: .BAM files + annotation.gtf</span>
+                <span class="info-pill ip-out">Output: count matrix (Gene x Sample TSV)</span>
+              </div>
+              <div class="code-block"><pre>featureCounts -T 8 -p \
+  -a annotation.gtf \
+  -o counts_matrix.txt \
+  sample1.bam sample2.bam sample3.bam</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#E11D48,#6D28D9);">5</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Differential Expression — DESeq2 / edgeR / CopyKat</div>
+                <div class="step-sub">R v4.2.1 · statistical testing · volcano plots · expression tables</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                <strong>What is DESeq2?</strong> An R package that takes raw count data and determines
+                which genes are significantly differentially expressed between conditions.
+                It normalises for library size differences using median-of-ratios normalisation,
+                applies a negative binomial statistical model, and uses shrinkage estimation
+                for accurate fold-change estimates even with small sample sizes.<br/><br/>
+                <strong>Significance threshold:</strong> A gene is considered differentially expressed
+                if adjusted p-value (FDR) &lt; 0.05 and absolute log2 fold change &gt;= 1
+                (meaning 2x difference or more).<br/><br/>
+                <strong>Visualisation:</strong> Volcano plots show all genes as dots —
+                x-axis is fold change, y-axis is significance. Genes in the upper right are
+                significantly upregulated; upper left are significantly downregulated.
+                Gene expression plots and heatmaps show patterns across samples.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">DESeq2 v1.38 (R)</span>
+                <span class="info-pill ip-tool">edgeR v3 (R)</span>
+                <span class="info-pill ip-tool">EnhancedVolcano (R)</span>
+                <span class="info-pill ip-in">Input: count matrix</span>
+                <span class="info-pill ip-out">Output: DGE results table (log2FC + padj per gene) + plots</span>
+                <span class="info-pill ip-why">Significant: padj &lt; 0.05 AND |log2FC| &gt;= 1</span>
+              </div>
+              <div class="code-block"><pre>library(DESeq2)
+dds &lt;- DESeqDataSetFromMatrix(
+  countData=counts, colData=coldata,
+  design=~condition)
+dds &lt;- DESeq(dds)
+res &lt;- results(dds)
+write.csv(as.data.frame(res),"DGE_results.csv")</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#F59E0B);">6</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Gene Expression Analysis — Plots and Tables</div>
+                <div class="step-sub">ggplot2 · heatmaps · PCA · expression profiling</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                After DESeq2, results are explored through multiple visualisations.
+                PCA plots show whether samples cluster as expected by condition.
+                Heatmaps show expression patterns across all significant genes.
+                Box plots compare normalised expression of individual genes of interest.
+                These visualisations are used in publications to communicate findings clearly.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">ggplot2 (R)</span>
+                <span class="info-pill ip-tool">pheatmap (R)</span>
+                <span class="info-pill ip-tool">PCAtools (R)</span>
+                <span class="info-pill ip-out">Output: publication-quality figures</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#EA6C00);">7</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Gene Ontology Enrichment and Pathway Analysis</div>
+                <div class="step-sub">clusterProfiler · gProfiler · AgriGO · RiceFREND · KEGG</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                Once you have your significant gene list, enrichment analysis maps them to
+                biological functions and pathways. Gene Ontology classifies genes by
+                biological process, molecular function, and cellular component.
+                Enriched GO terms tell you what biological machinery is being affected.
+                KEGG maps genes to metabolic pathways with visual diagrams.
+                In our rice DGE study, DEGs were enriched in heading-date and
+                flowering-time pathways — validating our experimental design.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">clusterProfiler (R)</span>
+                <span class="info-pill ip-tool">gProfiler</span>
+                <span class="info-pill ip-tool">AgriGO</span>
+                <span class="info-pill ip-tool">RiceFREND</span>
+                <span class="info-pill ip-in">Input: significant DEG list</span>
+                <span class="info-pill ip-out">Output: enriched GO terms + KEGG pathways</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- end sub-dge -->
+
+    <!-- SPLICING -->
+    <div class="subpanel" id="sub-splicing">
+      <div class="pipeline">
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#8B5CF6);">1</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Trimming + Quality Control</div>
+                <div class="step-sub">Trimmomatic v0.40 · FastQC again to confirm</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                Same trimming pipeline as DGE. For the Arabidopsis splicing thesis,
+                Trimmomatic v0.40 was used with HEADCROP:10 (hexamer bias removal),
+                SLIDINGWINDOW:4:20, and MINLEN:50. All 32 samples were trimmed
+                with identical parameters before STAR alignment.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">Trimmomatic v0.40</span>
+                <span class="info-pill ip-tool">FastQC v0.12.1</span>
+                <span class="info-pill ip-in">Input: raw .fastq (32 samples)</span>
+                <span class="info-pill ip-out">Output: 32 x trimmed paired .fastq</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#6D28D9);">2</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Alignment — STAR (splice-aware) + IGV strandedness check</div>
+                <div class="step-sub">STAR v2.7.11b · HISAT2 · --outSAMattributes required for SpliSER</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                For splicing analysis, STAR must be run with specific flags so SpliSER can work correctly.
+                The --outSAMattributes NH HI AS NM tags are required by SpliSER to identify
+                uniquely mapping reads. After alignment, strandedness is visually verified in IGV
+                before proceeding — this determines whether to use the -s RF or -s FR flag in SpliSER.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">STAR v2.7.11b</span>
+                <span class="info-pill ip-tool">IGV (strandedness check)</span>
+                <span class="info-pill ip-in">Input: trimmed .fastq + TAIR10.1 genome</span>
+                <span class="info-pill ip-out">Output: .BAM + .BAI per sample (32 total)</span>
+              </div>
+              <div class="code-block"><pre>STAR --runThreadN 8 \
+  --genomeDir ${GENOME_DIR} \
+  --readFilesIn clean_1.fastq clean_2.fastq \
+  --outSAMtype BAM SortedByCoordinate \
+  --outSAMattributes NH HI AS NM \
+  --genomeSAindexNbases 12 \
+  --outFileNamePrefix ${OUTPUT_DIR}/${sample_id}.
+samtools index ${OUTPUT_DIR}/${sample_id}.Aligned.sortedByCoord.out.bam</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#8B5CF6,#E11D48);">3</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">SpliSER Process</div>
+                <div class="step-sub">SpliSER v1.0.4 · Balasubramanian Lab · alpha and beta read counting</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                <strong>What is SpliSER?</strong> SpliSER (Splice Site Efficiency from RNA-seq)
+                counts two types of reads at every splice site: alpha reads (reads that cross
+                the splice junction — they skipped the intron) and beta reads (reads that end
+                at the splice site without crossing). The ratio gives a Splice Site Efficiency
+                (SSE) score between 0 and 1 for each splice site in each sample.<br/><br/>
+                SpliSER process is run independently on each of the 32 BAM files.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">SpliSER v1.0.4</span>
+                <span class="info-pill ip-in">Input: sample.bam + genomic_clean.gtf</span>
+                <span class="info-pill ip-out">Output: per-sample splice site counts (.tsv)</span>
+              </div>
+              <div class="code-block"><pre>spliser process sample.bam \
+  -o spliser_output_sample \
+  -A genomic_clean.gtf
+<span class="cc"># For stranded data: add -s RF or -s FR</span></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#EA6C00,#6D28D9);">4</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">SpliSER Combine + Output</div>
+                <div class="step-sub">Merges 32 samples · SSE normalisation · diffSpliSER format</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                SpliSER combine merges all 32 per-sample outputs into one unified dataset,
+                interpolating missing counts for splice sites absent in any sample.
+                SpliSER output then converts raw counts to normalised SSE values and formats
+                the data for diffSpliSER statistical testing using the -t flag.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-in">Input: 32 x SpliSER process outputs + samples_file.tsv</span>
+                <span class="info-pill ip-out">Output: final_spliser_output.tsv (SSE matrix)</span>
+              </div>
+              <div class="code-block"><pre>spliser combine -s samples_file.tsv \
+  -o spliser_combined_all_samples
+
+spliser output -C spliser_combined_all_samples \
+  -o final_spliser_output.tsv \
+  -t diffspliSER</pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#2563EB,#F59E0B);">5</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">diffSpliSER — Pairwise Comparisons</div>
+                <div class="step-sub">edgeR v3 · 120 pairwise comparisons · FDR &lt; 0.05 · |dSSE| &gt;= 0.1</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                diffSpliSER uses edgeR's generalised linear model (GLM) framework to statistically
+                test differential splice site usage between every pair of time point groups.
+                With 16 groups (8 LLCT + 8 LDZT time points), this produces 120 pairwise comparisons.
+                The contrast for each comparison is: (alpha.A - beta.A) - (alpha.B - beta.B),
+                which tests whether the splice site efficiency differs between conditions.
+                Significant sites must pass FDR &lt; 0.05 AND |delta-SSE| &gt;= 0.1.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">edgeR v3 (R)</span>
+                <span class="info-pill ip-tool">diffSpliSER R Markdown</span>
+                <span class="info-pill ip-in">Input: SSE matrix + target file (sample groups + library sizes)</span>
+                <span class="info-pill ip-out">Output: 120 x pairwise results files (_hits.tsv)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#6D28D9,#EA6C00);">6</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Venn Diagram + PCA Analysis</div>
+                <div class="step-sub">VennDiagram v1.7.3 · ggplot2 · reproducibility across comparisons</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                Four-way Venn diagrams compare Dawn vs Night comparisons across LLCT and LDZT
+                conditions to find splice sites that are reproducibly differentially spliced
+                across all four comparisons. The four-way overlap represents the most
+                reliable, biologically meaningful sites. PCA on SSE values confirms
+                sample clustering by time point and condition.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">VennDiagram v1.7.3 (R)</span>
+                <span class="info-pill ip-tool">ggplot2 + prcomp (R)</span>
+                <span class="info-pill ip-out">Output: Venn diagrams + PCA plots</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-wrap" onclick="toggleStep(this)">
+          <div class="step-dot" style="background:linear-gradient(135deg,#F59E0B,#E11D48);">7</div>
+          <div class="step-card">
+            <div class="step-top">
+              <div class="step-left">
+                <div class="step-name">Motif Enrichment Analysis — XSTREME</div>
+                <div class="step-sub">MEME Suite · bedtools getfasta · CisBP-RNA Arabidopsis</div>
+              </div><div class="step-chevron">+</div>
+            </div>
+            <div class="step-detail">
+              <div class="explain">
+                600bp windows centred on each differentially spliced site are extracted from
+                the TAIR10.1 genome using bedtools getfasta. XSTREME searches these sequences
+                against the Arabidopsis CisBP-RNA RNA-binding protein motif database to identify
+                which RBPs may be regulating splicing at these sites under circadian control.
+                Randomly sampled control sequences (2000 or 5000 sites) serve as the background.
+              </div>
+              <div class="info-row">
+                <span class="info-pill ip-tool">XSTREME (MEME Suite)</span>
+                <span class="info-pill ip-tool">bedtools getfasta</span>
+                <span class="info-pill ip-tool">CisBP-RNA database</span>
+                <span class="info-pill ip-in">Input: splice site coordinates → 600bp FASTA sequences</span>
+                <span class="info-pill ip-out">Output: enriched RBP motifs at circadian splice sites</span>
+              </div>
+              <div class="code-block"><pre>bedtools getfasta -fi genome.fa \
+  -bed test_sites_600bp.bed \
+  -fo test_sequences.fa -s -name
+
+xstreme --oc output/ --dna --dna2rna \
+  --evt 0.05 --minw 5 --maxw 10 \
+  --align center --meme-mod zoops \
+  --m Ray2013_rbp_Arabidopsis_thaliana.meme \
+  --p test_sequences.fa \
+  -n control_2000_sequences.fa</pre></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- end sub-splicing -->
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="fname">Nikhila Sai Tummala</p>
+  <p>ORCID: <a href="https://orcid.org/0009-0005-4415-636X" target="_blank">0009-0005-4415-636X</a></p>
+  <p style="margin-top:14px;">Built with curiosity, code, and a little magic.</p>
+</footer>
+
+<script>
+const screens = {
+  'landing':          document.getElementById('landing'),
+  'analysis-choice':  document.getElementById('screen-analysis-choice'),
+  'dna':              document.getElementById('screen-dna'),
+  'rna':              document.getElementById('screen-rna'),
+};
+
+function goTo(id){
+  Object.values(screens).forEach(s=>{
+    if(s) s.style.display='none';
+  });
+  if(screens[id]) screens[id].style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleStep(wrap){
+  wrap.classList.toggle('open');
+}
+
+function openSub(id, btn){
+  document.querySelectorAll('.subpanel').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sub-'+id).classList.add('active');
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Init
+goTo('landing');
+</script>
+</body>
+</html>
