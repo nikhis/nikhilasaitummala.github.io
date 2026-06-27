@@ -14,7 +14,4 @@ Bachelor of Technology in Bioinformatics
 
 ### [🧬 Bioinformatics Pipeline Documentation](https://nikhis.github.io/nikhilasaitummala.github.io)
 <br/>
-
-*Where genomic data meets curiosity* 🔥
-
 </div>
