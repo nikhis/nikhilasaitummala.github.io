@@ -12,7 +12,7 @@ Bachelor of Technology in Bioinformatics
 
 <br/>
 
-### [🧬 Bioinformatics Pipeline Documentation — Click to Enter](https://nikhis.github.io/nikhilasaitummala.github.io)
+### [🧬 Bioinformatics Pipeline Documentation](https://nikhis.github.io/nikhilasaitummala.github.io)
 <br/>
 
 *Where genomic data meets curiosity* 🔥
